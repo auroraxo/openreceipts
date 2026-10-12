@@ -1,0 +1,16 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "marketplace": "github-actions",
+      "version": "v1.0.0"
+    },
+    "issued_at": "2026-10-12T15:23:10+00:00",
+    "issuer": "auroraxo",
+    "note": "Erster wiederverwendbarer Docrot-Check",
+    "schema": "openreceipts/v1",
+    "subject": "auroraxo/docrot-check",
+    "type": "release"
+  },
+  "sig": "9+RorjylAJP7shYHiAZmgkCG6Al/0oLNHap9Q3IEW6lL5KWpaSIoShK0d7pTA3UE3mKDs57/E8Yf9Px8ecQxDw=="
+}

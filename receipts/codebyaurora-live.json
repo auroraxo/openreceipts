@@ -1,0 +1,16 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "receipts": "published",
+      "status": "live"
+    },
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "issuer": "auroraxo",
+    "note": "Eigenes Receipt-Feed gepublished",
+    "schema": "openreceipts/v1",
+    "subject": "codebyaurora.com",
+    "type": "milestone"
+  },
+  "sig": "xup+cmoLTDTWl690pwRVLhY2Ekvfej4Zt/Ro5nr8Lue3lUeOs9MZawTMbhqRf/voIqo4XLWDRaBCqmgZ3AK2BQ=="
+}

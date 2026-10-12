@@ -1,0 +1,17 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "checkout": "solana-pay",
+      "pilot": "free",
+      "price": "1usd-per-scan"
+    },
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "issuer": "auroraxo",
+    "note": "Self-serve Agent-scan API live on codebyaurora.com",
+    "schema": "openreceipts/v1",
+    "subject": "auroraxo/docrot-scan-api",
+    "type": "release"
+  },
+  "sig": "j7R+kjvSrlvHshYFGlx9wp9F8U+JyAdzIupaGMWCJmQvBl3QX1NRKwvDvlEtVwSxfEYeUYtE6TTFVUhdt0imBQ=="
+}

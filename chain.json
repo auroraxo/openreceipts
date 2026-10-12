@@ -1,0 +1,34 @@
+[
+  {
+    "sha256": "5e3290ebc60796406838220516d4cb4415bf055e5edfe4f9452fc64528e0d142",
+    "issuer": "auroraxo",
+    "type": "release",
+    "subject": "auroraxo/aurora-node-auditor",
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "prev": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "sha256": "56b5fec3ad53ff8f1160b407a898caf4b713d1b593cb732e8f4baf03c74f798f",
+    "issuer": "auroraxo",
+    "type": "milestone",
+    "subject": "codebyaurora.com",
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "prev": "5e3290ebc60796406838220516d4cb4415bf055e5edfe4f9452fc64528e0d142"
+  },
+  {
+    "sha256": "cea03e1a187ca90a77c651e8a91d404ed35629b70d4e08697e2a8cb24406abec",
+    "issuer": "auroraxo",
+    "type": "release",
+    "subject": "auroraxo/docrot-check",
+    "issued_at": "2026-10-12T15:23:10+00:00",
+    "prev": "56b5fec3ad53ff8f1160b407a898caf4b713d1b593cb732e8f4baf03c74f798f"
+  },
+  {
+    "sha256": "6eb8254d50c85557342f63cd1fafce628134abd832dcb6849418aad32a8171a5",
+    "issuer": "auroraxo",
+    "type": "release",
+    "subject": "auroraxo/docrot-scan-api",
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "prev": "cea03e1a187ca90a77c651e8a91d404ed35629b70d4e08697e2a8cb24406abec"
+  }
+]

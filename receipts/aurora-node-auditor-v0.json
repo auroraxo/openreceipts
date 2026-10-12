@@ -1,0 +1,15 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "scope": "node-security-audit"
+    },
+    "issued_at": "2026-10-12T15:23:23+00:00",
+    "issuer": "auroraxo",
+    "note": "Ops-auditor fuer k8s/Grafana",
+    "schema": "openreceipts/v1",
+    "subject": "auroraxo/aurora-node-auditor",
+    "type": "release"
+  },
+  "sig": "dshO4RUn3JHzG24J78LjBWtiUjIqxDP2ZlWjNFZ3RL2HXvvxYaSwWkRygqZayeHbpkHvQBbQpiGeSr4vwtrQCw=="
+}
