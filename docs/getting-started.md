@@ -138,6 +138,26 @@ Receipts are plain `.json` files — commit them to your repo, host them on your
 domain, or aggregate them into a feed (see `feed.py`). Your public key is the
 identity; wherever your `.pub` file is readable, your receipts are verifiable.
 
+## Automate: release receipts with GitHub Actions
+
+Once you publish releases on GitHub, [auroraxo/openreceipts-action](https://github.com/auroraxo/openreceipts-action)
+signs a receipt for every release, verifies it, and attaches it to the release — one workflow, one secret:
+
+```yaml
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: auroraxo/openreceipts-action@v1
+        with:
+          key: ${{ secrets.OPENRECEIPTS_PRIVATE_KEY }}
+```
+
 ## CI runs this exact path
 
 `.github/workflows/verify.yml` runs `scripts/getting-started-smoke.sh` on every
