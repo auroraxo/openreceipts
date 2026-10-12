@@ -1,0 +1,130 @@
+{
+  "count": 6,
+  "entries": [
+    {
+      "file": "receipts/nestjs-18099-merge.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "fixes": "nestjs/nest#18091",
+          "merge_commit": "0c09c1af5d62c36988eecc3e0100d70b30065b3f",
+          "merged_at": "2026-10-12T08:43:52Z",
+          "merged_by": "kamilmysliwiec",
+          "pr": "18099"
+        },
+        "issued_at": "2026-10-12T15:44:46+00:00",
+        "issuer": "auroraxo",
+        "note": "Merged upstream: dead travis-ci.org badges replaced in sample READMEs",
+        "schema": "openreceipts/v1",
+        "subject": "nestjs/nest",
+        "type": "contribution"
+      },
+      "sha256": "a8cf05cea5ea0c2d7126a61dcc2e5b4cec4a88fc5fa02c86c0f723426a2efd02",
+      "sig": "57EDTtq/glLLS2Qli6wv2d7EOmdE1ZVCE0DWyce1M94HkNF+xlc2mWGmXyUbiffiQa9OzD4og0NqahTpkQxGBQ==",
+      "verified": true
+    },
+    {
+      "file": "receipts/vite-23720-merge.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "merge_commit": "40fa7d75b96f598a35bdce985e720db3417026b0",
+          "merged_at": "2026-10-12T07:12:15Z",
+          "pr": "23720"
+        },
+        "issued_at": "2026-10-12T15:44:46+00:00",
+        "issuer": "auroraxo",
+        "note": "Merged upstream: dead TypeScript dom/webworker lib doc links replaced",
+        "schema": "openreceipts/v1",
+        "subject": "vitejs/vite",
+        "type": "contribution"
+      },
+      "sha256": "4c36a2ac827ba0e5935a4e2e75637b8e69ca6c2cfb918a436a5f2ad573aa25b4",
+      "sig": "wMA5QrALEbE6U5jAPZCpPZBqZlQ+I9uNn4Y41jIBWzF5BLHE+erS9dJb3gs8MF5Lp8OtSoogafB423KqyLdoCw==",
+      "verified": true
+    },
+    {
+      "file": "receipts/aurora-node-auditor-v0.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "scope": "node-security-audit"
+        },
+        "issued_at": "2026-10-12T15:23:23+00:00",
+        "issuer": "auroraxo",
+        "note": "Ops-auditor fuer k8s/Grafana",
+        "schema": "openreceipts/v1",
+        "subject": "auroraxo/aurora-node-auditor",
+        "type": "release"
+      },
+      "sha256": "5e3290ebc60796406838220516d4cb4415bf055e5edfe4f9452fc64528e0d142",
+      "sig": "dshO4RUn3JHzG24J78LjBWtiUjIqxDP2ZlWjNFZ3RL2HXvvxYaSwWkRygqZayeHbpkHvQBbQpiGeSr4vwtrQCw==",
+      "verified": true
+    },
+    {
+      "file": "receipts/codebyaurora-live.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "receipts": "published",
+          "status": "live"
+        },
+        "issued_at": "2026-10-12T15:23:23+00:00",
+        "issuer": "auroraxo",
+        "note": "Eigenes Receipt-Feed gepublished",
+        "schema": "openreceipts/v1",
+        "subject": "codebyaurora.com",
+        "type": "milestone"
+      },
+      "sha256": "56b5fec3ad53ff8f1160b407a898caf4b713d1b593cb732e8f4baf03c74f798f",
+      "sig": "xup+cmoLTDTWl690pwRVLhY2Ekvfej4Zt/Ro5nr8Lue3lUeOs9MZawTMbhqRf/voIqo4XLWDRaBCqmgZ3AK2BQ==",
+      "verified": true
+    },
+    {
+      "file": "receipts/docrot-scan-api-v0.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "checkout": "solana-pay",
+          "pilot": "free",
+          "price": "1usd-per-scan"
+        },
+        "issued_at": "2026-10-12T15:23:23+00:00",
+        "issuer": "auroraxo",
+        "note": "Self-serve Agent-scan API live on codebyaurora.com",
+        "schema": "openreceipts/v1",
+        "subject": "auroraxo/docrot-scan-api",
+        "type": "release"
+      },
+      "sha256": "6eb8254d50c85557342f63cd1fafce628134abd832dcb6849418aad32a8171a5",
+      "sig": "j7R+kjvSrlvHshYFGlx9wp9F8U+JyAdzIupaGMWCJmQvBl3QX1NRKwvDvlEtVwSxfEYeUYtE6TTFVUhdt0imBQ==",
+      "verified": true
+    },
+    {
+      "file": "receipts/docrot-check-v1.json",
+      "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+      "receipt": {
+        "claims": {
+          "marketplace": "github-actions",
+          "version": "v1.0.0"
+        },
+        "issued_at": "2026-10-12T15:23:10+00:00",
+        "issuer": "auroraxo",
+        "note": "Erster wiederverwendbarer Docrot-Check",
+        "schema": "openreceipts/v1",
+        "subject": "auroraxo/docrot-check",
+        "type": "release"
+      },
+      "sha256": "cea03e1a187ca90a77c651e8a91d404ed35629b70d4e08697e2a8cb24406abec",
+      "sig": "9+RorjylAJP7shYHiAZmgkCG6Al/0oLNHap9Q3IEW6lL5KWpaSIoShK0d7pTA3UE3mKDs57/E8Yf9Px8ecQxDw==",
+      "verified": true
+    }
+  ],
+  "meta": {
+    "issuer": "auroraxo",
+    "name": "Aurora public receipts",
+    "url": "https://codebyaurora.com/receipts"
+  },
+  "pinned_pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "schema": "openreceipts-feed/v1"
+}

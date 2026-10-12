@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Live Ed25519-signed receipt feed from auroraxo, verifiable offline against a pinned public key.">
+  <title>openreceipts — verified receipts from auroraxo</title>
+  <link rel="alternate" type="application/json" href="feed.json">
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 2rem auto; max-width: 56rem; padding: 0 1rem; line-height: 1.5; color: #1a1a1a; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #ddd; }
+    th { background: #f5f5f5; }
+    code { background: #f0f0f0; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.9em; }
+    tr.note td { color: #666; font-size: 0.85rem; padding-top: 0; }
+    .detail { color: #777; font-family: monospace; font-size: 0.85em; }
+    .meta { color: #777; font-size: 0.85rem; margin-top: 0.75rem; }
+    .key { word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h1>openreceipts receipts — auroraxo</h1>
+  <p>Live feed of Ed25519-signed receipts issued by <code>auroraxo</code>.
+  Every entry below is independently verifiable offline against the pinned public key.</p>
+  <p><strong>Pinned issuer key:</strong> <code class="key">z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=</code><br>
+  <strong>Feed:</strong> <a href="feed.json">feed.json</a> ·
+  <strong>Spec:</strong> <a href="SPEC.md">SPEC.md</a> ·
+  <strong>Repo:</strong> <a href="https://github.com/auroraxo/openreceipts">github.com/auroraxo/openreceipts</a></p>
+
+  <div id="feed" aria-live="polite">Loading receipt feed…</div>
+
+  <script>
+  (async function () {
+    const el = document.getElementById('feed');
+    try {
+      const res = await fetch('feed.json', { cache: 'no-store' });
+      const feed = await res.json();
+      if (!feed.entries || !feed.entries.length) { el.textContent = 'No receipts yet.'; return; }
+      const PINNED = 'z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=';
+      const rows = feed.entries.map(function (e) {
+        const r = e.receipt || {};
+        const claims = r.claims || {};
+        const subject = r.subject || '';
+        const type = r.type || '';
+        const when = r.issued_at || '';
+        const note = r.note || '';
+        const pinned = e.pubkey === PINNED;
+        const pr = claims.pr ? ('#' + claims.pr) : '';
+        const sha = claims.merge_commit ? String(claims.merge_commit).slice(0, 7) : '';
+        const detail = [pr, sha ? ('@ ' + sha) : ''].filter(Boolean).join(' ');
+        let html = '<tr>'
+          + '<td><code>' + type + '</code></td>'
+          + '<td><a href="https://github.com/' + subject + '">' + subject + '</a>'
+          + (detail ? ' <span class="detail">' + detail + '</span>' : '') + '</td>'
+          + '<td>' + when + '</td>'
+          + '<td>' + (pinned ? '&#9989; pinned key' : '&#9888;&#65039; unknown key') + '</td>'
+          + '</tr>';
+        if (note) html += '<tr class="note"><td></td><td colspan="3">' + note + '</td></tr>';
+        return html;
+      }).join('');
+      el.innerHTML = '<table><thead><tr><th>Type</th><th>Subject</th><th>Issued</th><th>Key</th></tr></thead><tbody>'
+        + rows + '</tbody></table>'
+        + '<p class="meta">' + feed.count + ' receipts &middot; verify offline with <code>verify.mjs</code> or <code>receipt.py</code></p>';
+    } catch (err) {
+      el.textContent = 'Could not load feed.json — ' + err;
+    }
+  })();
+  </script>
+</body>
+</html>
