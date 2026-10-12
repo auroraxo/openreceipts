@@ -22,3 +22,5 @@ jobs:
         run: python3 receipt.py list receipts/
       - name: Verify receipts (Node implementation) + pinned key + chain
         run: node verify.mjs --key keys/auroraxo.pub --chain chain.json receipts/
+      - name: Getting-started end-to-end (keygen -> sign -> verify -> tamper)
+        run: bash scripts/getting-started-smoke.sh

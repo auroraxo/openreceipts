@@ -48,6 +48,8 @@ milestone — signed by an issuer key, verifiable by anyone, offline, forever.
 
 ## CLI
 
+**New here?** [Getting started — sign your first receipt in 5 minutes](docs/getting-started.md).
+
 ```bash
 python3 receipt.py keygen --issuer auroraxo
 python3 receipt.py sign --issuer auroraxo --type release \
