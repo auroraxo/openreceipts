@@ -70,6 +70,12 @@ def _load_backend():
                 except Exception:
                     return False
 
+            @staticmethod
+            def pubkey(priv) -> bytes:
+                return priv.public_key().public_bytes(
+                    serialization.Encoding.Raw, serialization.PublicFormat.Raw
+                )
+
         return Backend
     except ImportError:
         pass
@@ -109,6 +115,10 @@ def _load_backend():
             except Exception:
                 return False
 
+        @staticmethod
+        def pubkey(priv) -> bytes:
+            return bytes(priv.verify_key)
+
     return Backend
 
 
@@ -142,8 +152,15 @@ def ensure_key(issuer: str):
     if os.path.exists(priv_path):
         with open(priv_path, "rb") as f:
             priv = BACKEND.load_priv(f.read())
-        with open(pub_path, "rb") as f:
-            pub = b64d(f.read().decode().strip())
+        if os.path.exists(pub_path):
+            with open(pub_path) as f:
+                pub = b64d(f.read().strip())
+        else:
+            # BYO-key flow (e.g. GitHub Actions secret): private key provided,
+            # public key derived and published alongside it.
+            pub = BACKEND.pubkey(priv)
+            with open(pub_path, "w") as f:
+                f.write(b64e(pub) + "\n")
         return priv, pub
     os.makedirs(os.path.dirname(priv_path), exist_ok=True)
     priv_pem, pub_raw = BACKEND.generate()
