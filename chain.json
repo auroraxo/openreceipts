@@ -30,5 +30,21 @@
     "subject": "auroraxo/docrot-scan-api",
     "issued_at": "2026-10-12T15:23:23+00:00",
     "prev": "cea03e1a187ca90a77c651e8a91d404ed35629b70d4e08697e2a8cb24406abec"
+  },
+  {
+    "sha256": "a8cf05cea5ea0c2d7126a61dcc2e5b4cec4a88fc5fa02c86c0f723426a2efd02",
+    "issuer": "auroraxo",
+    "type": "contribution",
+    "subject": "nestjs/nest",
+    "issued_at": "2026-10-12T15:44:46+00:00",
+    "prev": "6eb8254d50c85557342f63cd1fafce628134abd832dcb6849418aad32a8171a5"
+  },
+  {
+    "sha256": "4c36a2ac827ba0e5935a4e2e75637b8e69ca6c2cfb918a436a5f2ad573aa25b4",
+    "issuer": "auroraxo",
+    "type": "contribution",
+    "subject": "vitejs/vite",
+    "issued_at": "2026-10-12T15:44:46+00:00",
+    "prev": "a8cf05cea5ea0c2d7126a61dcc2e5b4cec4a88fc5fa02c86c0f723426a2efd02"
   }
 ]

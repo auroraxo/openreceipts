@@ -1,0 +1,17 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "merge_commit": "40fa7d75b96f598a35bdce985e720db3417026b0",
+      "merged_at": "2026-10-12T07:12:15Z",
+      "pr": "23720"
+    },
+    "issued_at": "2026-10-12T15:44:46+00:00",
+    "issuer": "auroraxo",
+    "note": "Merged upstream: dead TypeScript dom/webworker lib doc links replaced",
+    "schema": "openreceipts/v1",
+    "subject": "vitejs/vite",
+    "type": "contribution"
+  },
+  "sig": "wMA5QrALEbE6U5jAPZCpPZBqZlQ+I9uNn4Y41jIBWzF5BLHE+erS9dJb3gs8MF5Lp8OtSoogafB423KqyLdoCw=="
+}

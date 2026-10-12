@@ -1,0 +1,19 @@
+{
+  "pubkey": "z74vce0VgGTpPP7Nu/G+O9IVDgcKg/lceC/2GAvwzi8=",
+  "receipt": {
+    "claims": {
+      "fixes": "nestjs/nest#18091",
+      "merge_commit": "0c09c1af5d62c36988eecc3e0100d70b30065b3f",
+      "merged_at": "2026-10-12T08:43:52Z",
+      "merged_by": "kamilmysliwiec",
+      "pr": "18099"
+    },
+    "issued_at": "2026-10-12T15:44:46+00:00",
+    "issuer": "auroraxo",
+    "note": "Merged upstream: dead travis-ci.org badges replaced in sample READMEs",
+    "schema": "openreceipts/v1",
+    "subject": "nestjs/nest",
+    "type": "contribution"
+  },
+  "sig": "57EDTtq/glLLS2Qli6wv2d7EOmdE1ZVCE0DWyce1M94HkNF+xlc2mWGmXyUbiffiQa9OzD4og0NqahTpkQxGBQ=="
+}
