@@ -59,6 +59,22 @@ python3 receipt.py verify receipts/docrot-check-v1.json --chain chain.json
 python3 receipt.py list receipts/
 ```
 
+Signing without a key file — through a local signing daemon
+([signerd](https://github.com/auroraxo/signerd)):
+
+```bash
+python3 receipt.py sign --issuer auroraxo --type release \
+    --subject auroraxo/signerd --claim version=v0.1.0 \
+    --via-signerd ~/.local/share/signerd/signerd.sock --grant releases \
+    --out receipts/signed-by-daemon.json
+```
+
+The daemon holds the key; this process sends the body and receives a
+signature it verifies **before writing anything**. No `.key` file is created
+or read, and a daemon refusal (`refused: window_cap`, `refused: replay`, …)
+exits non-zero with no file. The output is an ordinary receipt — both
+verifiers accept it unchanged.
+
 ## Verifying from anywhere
 
 The verify path is ~40 lines of Python. Copy `receipt.py`, or read the spec below:

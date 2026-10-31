@@ -120,6 +120,37 @@ python3 receipt.py verify /tmp/tampered.json      # FAIL: signature invalid
 Changing one character of a claim invalidates the signature. There is no server to
 ask, no timestamp to trust — just Ed25519 over canonical JSON.
 
+## 7. Sign without a key file — through a local signing daemon
+
+If you would rather not keep a private key next to your receipts (CI runners,
+agents, a shared machine), you can sign through [signerd](https://github.com/auroraxo/signerd),
+a local daemon that holds the key and signs only what a *grant* allows:
+
+```bash
+python3 receipt.py sign --issuer alice --type release \
+    --subject alice/your-repo --claim version=v1.0.0 \
+    --via-signerd /run/user/1000/signerd.sock --grant releases \
+    --out receipts/first.json
+```
+
+What changes, measurably:
+
+- **No key material in this process.** No `~/.openreceipts/alice.key` is created
+  and none is read — the daemon holds the key, the client sends public values and
+  receives a signature.
+- **The client verifies before it writes.** If the daemon's answer does not verify
+  against your own body, `receipt.py` exits non-zero and writes no file. A lying
+  daemon cannot produce a receipt.
+- **Refusals are refusals.** If the grant does not cover this issuer, type,
+  subject or message count, the daemon refuses and `receipt.py` exits non-zero
+  with `refused: <reason>` — no file is written.
+- **The pinned key still rules.** If you already published a `.pub` key for the
+  issuer and the daemon answers with a different one, that is a refusal, not a
+  silent key swap.
+
+The resulting file is an ordinary openreceipts document: `receipt.py verify` and
+`verify.mjs` accept it unchanged.
+
 ## What just happened
 
 1. **Canonical bytes** — the signature covers

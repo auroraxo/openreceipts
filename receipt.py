@@ -23,6 +23,7 @@ import base64
 import hashlib
 import json
 import os
+import socket as socket_mod
 import sys
 import time
 from datetime import datetime, timezone
@@ -80,7 +81,41 @@ def _load_backend():
     except ImportError:
         pass
 
-    import nacl.signing  # type: ignore
+    try:
+        import nacl.signing  # type: ignore
+    except ImportError:
+        # Both real backends absent: local signing is impossible, but the
+        # verifier alone still works and --via-signerd needs exactly one
+        # verify. Keep the product usable instead of dying at import time.
+        class Backend:
+            @staticmethod
+            def verify(pub_raw: bytes, msg: bytes, sig: bytes) -> bool:
+                import sys
+
+                print(
+                    "FAIL: no Ed25519 backend available "
+                    "(install 'cryptography' or 'pynacl')",
+                    file=sys.stderr,
+                )
+                return False
+
+            @staticmethod
+            def generate():
+                raise RuntimeError("no Ed25519 backend available")
+
+            @staticmethod
+            def load_priv(raw: bytes):
+                raise RuntimeError("no Ed25519 backend available")
+
+            @staticmethod
+            def sign(priv, msg: bytes):
+                raise RuntimeError("no Ed25519 backend available")
+
+            @staticmethod
+            def pubkey(priv):
+                raise RuntimeError("no Ed25519 backend available")
+
+        return Backend
 
     class Backend:
         @staticmethod
@@ -137,6 +172,100 @@ def b64d(s: str) -> bytes:
 
 def canonical(obj) -> bytes:
     return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _pinned_b64(issuer: str) -> str | None:
+    """The pinned public key for `issuer`, if one exists locally.
+
+    ``receipt.py verify --key`` pins a key you have seen before; signing is
+    held to the same rule in reverse: if you published a key for this issuer,
+    a daemon answering with a DIFFERENT key is a refusal, not a key swap.
+    Public data only — this never reads or writes the private key.
+    """
+    _, pub_path = key_paths(issuer)
+    if os.path.exists(pub_path):
+        with open(pub_path) as f:
+            return f.read().strip()
+    return None
+
+
+def _via_signerd(
+    issuer: str,
+    body: dict,
+    socket_path: str,
+    grant: str,
+    timeout_s: float = 5.0,
+) -> dict:
+    """Sign `body` through a local signerd daemon (the message-grant envelope).
+
+    The daemon holds the private key; this process sends the receipt body as
+    JSON text and receives ``{ok, kind, signature, pubkey, ...}``.
+    No key material ever enters this process, and no OPENRECEIPTS_HOME key
+    file is created: signing without a key of one's own is the entire point.
+
+    The signature is verified HERE, before anything is written: a daemon that
+    answers ``ok`` with bytes that do not verify cannot produce a receipt.
+    Refusals travel as ``{ok: false, error: <reason>}`` and become
+    ``refused: <reason>`` on stderr with a non-zero exit upstream.
+    """
+    pinned = _pinned_b64(issuer)
+    payload = json.dumps({"grant": grant, "body": json.dumps(body)}).encode()
+    if len(payload) > 8192:
+        print("FAIL: request too large for the signerd request frame", file=sys.stderr)
+        raise SystemExit(1)
+    deadline = time.monotonic() + timeout_s
+    s = socket_mod.socket(socket_mod.AF_UNIX, socket_mod.SOCK_STREAM)
+    try:
+        s.settimeout(max(0.1, deadline - time.monotonic()))
+        try:
+            s.connect(socket_path)
+        except (OSError, FileNotFoundError) as e:
+            print(f"FAIL: cannot reach signerd at {socket_path}: {e}", file=sys.stderr)
+            raise SystemExit(1)
+        s.sendall(payload + b"\n")
+        buf = bytearray()
+        while b"\n" not in buf:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                print("FAIL: signerd did not answer", file=sys.stderr)
+                raise SystemExit(1)
+            s.settimeout(remaining)
+            chunk = s.recv(65536)
+            if not chunk:
+                break
+            buf.extend(chunk)
+            if len(buf) > 1_000_000:
+                print("FAIL: signerd response too large", file=sys.stderr)
+                raise SystemExit(1)
+    finally:
+        s.close()
+
+    line = bytes(buf).split(b"\n", 1)[0]
+    try:
+        response = json.loads(line.decode())
+    except Exception:
+        print("FAIL: signerd response is not JSON", file=sys.stderr)
+        raise SystemExit(1)
+    if response.get("ok") is not True:
+        reason = response.get("error", "unknown")
+        print(f"refused: {reason}", file=sys.stderr)
+        raise SystemExit(1)
+    pubkey_b64 = response.get("pubkey")
+    sig_b64 = response.get("signature")
+    if not isinstance(pubkey_b64, str) or not isinstance(sig_b64, str):
+        print("FAIL: signerd answer lacks pubkey/signature", file=sys.stderr)
+        raise SystemExit(1)
+    if pinned is not None and pinned != pubkey_b64:
+        print(
+            "FAIL: daemon key does not match the pinned public key for "
+            f"{issuer} (embedded {pubkey_b64} != pinned {pinned})",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+    if not BACKEND.verify(b64d(pubkey_b64), canonical(body), b64d(sig_b64)):
+        print("FAIL: signature returned by signerd does not verify", file=sys.stderr)
+        raise SystemExit(1)
+    return {"receipt": body, "pubkey": pubkey_b64, "sig": sig_b64}
 
 
 def key_paths(issuer: str):
@@ -202,16 +331,24 @@ def cmd_sign(args) -> int:
         "issuer": args.issuer,
         "type": args.type,
         "subject": args.subject,
-        "issued_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "issued_at": args.issued_at
+        if args.issued_at
+        else datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "claims": claims,
     }
     if args.note:
         body["note"] = args.note
 
-    priv, pub = ensure_key(args.issuer)
-    payload = {"receipt": body, "pubkey": b64e(pub)}
-    sig = BACKEND.sign(priv, canonical(body))
-    doc = {**payload, "sig": b64e(sig)}
+    if args.via_signerd:
+        if args.via_signerd == "-":
+            print("FAIL: --via-signerd needs the daemon socket path", file=sys.stderr)
+            return 2
+        doc = _via_signerd(args.issuer, body, args.via_signerd, args.grant or "default")
+    else:
+        priv, pub = ensure_key(args.issuer)
+        payload = {"receipt": body, "pubkey": b64e(pub)}
+        sig = BACKEND.sign(priv, canonical(body))
+        doc = {**payload, "sig": b64e(sig)}
 
     text = json.dumps(doc, indent=2, sort_keys=True) + "\n"
     if args.out:
@@ -310,6 +447,14 @@ def main(argv=None) -> int:
     s.add_argument("--claim", action="append", help="key=value (repeatable)")
     s.add_argument("--json", help="extra claims as JSON object")
     s.add_argument("--note", help="human-readable note")
+    s.add_argument("--issued-at", help="RFC3339 issued_at (default: now); replay identity")
+    s.add_argument(
+        "--via-signerd",
+        metavar="SOCKET",
+        help="sign through a local signerd daemon Unix socket instead of a local "
+        "key; needs --grant; no key material is created or read in this process",
+    )
+    s.add_argument("--grant", help="signerd grant name (with --via-signerd)")
     s.add_argument("--out", help="output path")
     s.set_defaults(fn=cmd_sign)
 
