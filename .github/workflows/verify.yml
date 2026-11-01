@@ -24,3 +24,5 @@ jobs:
         run: node verify.mjs --key keys/auroraxo.pub --chain chain.json receipts/
       - name: Getting-started end-to-end (keygen -> sign -> verify -> tamper)
         run: bash scripts/getting-started-smoke.sh
+      - name: H12d end-to-end (incomplete signed doc refused by both; feed sorts by moment)
+        run: bash scripts/h12d-smoke.sh

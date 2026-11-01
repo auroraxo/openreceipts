@@ -13,6 +13,12 @@ import { join } from "node:path";
 
 const SCHEMA = "openreceipts/v1";
 
+// Required fields of openreceipts/v1 (SPEC section 2). A signed document
+// missing any of them is invalid regardless of its signature: without this
+// check the Python verifier crashed (KeyError: issued_at) while this one
+// printed "issued undefined" and passed — two verdicts for one artifact.
+const REQUIRED_FIELDS = ["schema", "issuer", "type", "subject", "issued_at", "claims"];
+
 // Python-compatible JSON: json.dumps(obj, sort_keys=True, separators=(",", ":"))
 // with ensure_ascii semantics (anything outside 0x20..0x7e becomes \uXXXX,
 // astral code points as surrogate pairs, lowercase hex).
@@ -80,6 +86,9 @@ function verifyOne(file, pinned) {
   const body = doc.receipt;
   if (!body || body.schema !== SCHEMA)
     throw new Error("not an openreceipts/v1 document");
+  const missing = REQUIRED_FIELDS.filter((k) => !(k in body));
+  if (missing.length)
+    throw new Error(`missing required field(s): ${missing.join(", ")}`);
   if (typeof doc.pubkey !== "string" || typeof doc.sig !== "string")
     throw new Error("missing pubkey/sig");
 
