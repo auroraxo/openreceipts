@@ -26,7 +26,7 @@ Required fields:
 | `issuer` | string | Public identifier of the signer (e.g. `"auroraxo"`, `"acme-corp"`). |
 | `type` | string | One of: `release`, `scan`, `contribution`, `milestone`, `customer`, or any other snake_case label the issuer wishes to use. |
 | `subject` | string | What the receipt is about. Convention: `<owner>/<repo>`, `<product>`, or `<domain>`. |
-| `issued_at` | string | ISO 8601 timestamp with timezone. The spec does **not** require this to be accurate; verifiers do not check the clock. |
+| `issued_at` | string | ISO 8601 timestamp with timezone. The spec does **not** require this to be accurate; verifiers do not check the clock. The field itself is required — a document without it is refused, not crashed on (section 4). |
 | `claims` | object | String → string map of asserted facts. Values are strings, not numbers, booleans or nested objects, to keep the canonicalisation trivial. |
 
 Optional:
@@ -61,6 +61,8 @@ Ed25519 over the canonical bytes. The `pubkey` and `sig` fields embed the **raw*
 - Signature: 64 bytes, base64.
 
 Verification re-derives `canonical(receipt)`, then `Ed25519.verify(embedded_pubkey, canonical_bytes, embedded_sig)`. Any failure — wrong size, base64 decode error, verify false — is a hard FAIL.
+
+Every implementation of this spec must also refuse a document whose `receipt` object lacks any required field (section 2), regardless of a valid signature over it: the signature covers the bytes, not the schema. Reference behavior (both verifiers, identical verdict): `FAIL: missing required field(s): <names>` with a non-zero exit.
 
 ## 5. Pinned-key verification
 

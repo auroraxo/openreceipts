@@ -174,6 +174,18 @@ def canonical(obj) -> bytes:
     return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
 
 
+# The required fields of openreceipts/v1 (SPEC section 2). A signed document
+# missing any of them is invalid regardless of its signature; without this
+# check the verifier's own field access crashes (KeyError) on a body the
+# signature covers — review 7 / H12d.
+REQUIRED_FIELDS = ("schema", "issuer", "type", "subject", "issued_at", "claims")
+
+
+def missing_required_fields(body) -> list[str]:
+    """The openreceipts/v1 required fields absent from ``body``."""
+    return [k for k in REQUIRED_FIELDS if k not in body]
+
+
 def _pinned_b64(issuer: str) -> str | None:
     """The pinned public key for `issuer`, if one exists locally.
 
@@ -371,6 +383,14 @@ def cmd_verify(args) -> int:
         return 1
     if body.get("schema") != SCHEMA:
         print("FAIL: bad schema", file=sys.stderr)
+        return 1
+
+    missing = missing_required_fields(body)
+    if missing:
+        print(
+            "FAIL: missing required field(s): " + ", ".join(missing),
+            file=sys.stderr,
+        )
         return 1
 
     pub = b64d(doc["pubkey"])

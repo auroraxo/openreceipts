@@ -21,10 +21,30 @@ import glob
 import json
 import os
 import sys
+from datetime import datetime, timezone
 from typing import Any
 
 # Re-use the verification path from receipt.py
 import receipt as r
+
+
+def moment(entry: dict) -> tuple[int, float]:
+    """Sort key: the real instant behind issued_at, newest first.
+
+    Sorting the raw string ordered by spelling, not by time: an offset
+    spelling like 2027-01-01T00:00:00+05:30 (18:30Z on 2026-12-31) sorted
+    above 2026-12-31T23:00:00Z although it claims an EARLIER moment (H12d).
+    Unparsable stamps sink below every parsable entry instead of crashing
+    the sort.
+    """
+    raw = entry["receipt"].get("issued_at")
+    try:
+        when = datetime.fromisoformat(raw)
+    except (TypeError, ValueError):
+        return (0, 0.0)
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    return (1, when.timestamp())
 
 
 def collect(directory: str) -> list[str]:
@@ -40,6 +60,14 @@ def verify_all(files: list[str], pinned: str | None) -> tuple[list[dict], int]:
                 doc = json.load(f)
             body = doc.get("receipt")
             if not body or body.get("schema") != r.SCHEMA:
+                bad += 1
+                continue
+            missing = r.missing_required_fields(body)
+            if missing:
+                print(
+                    f"WARN {fp}: missing required field(s): {', '.join(missing)}",
+                    file=sys.stderr,
+                )
                 bad += 1
                 continue
             pub = r.b64d(doc["pubkey"])
@@ -64,7 +92,7 @@ def verify_all(files: list[str], pinned: str | None) -> tuple[list[dict], int]:
         except Exception as e:
             print(f"WARN {fp}: {e}", file=sys.stderr)
             bad += 1
-    ok.sort(key=lambda e: e["receipt"].get("issued_at", ""), reverse=True)
+    ok.sort(key=moment, reverse=True)
     return ok, bad
 
 
